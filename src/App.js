@@ -49,7 +49,12 @@ function Home() {
   // function displayData() {}
 
   if (store.weatherData) {
-    return <Weather weather={store.weatherData} />;
+    return (<>
+    <button onClick={ (e) => {
+      e.preventDefault();
+      setStore({ ...store, weatherData: null })}}>Back</button>
+    <Weather weather={store.weatherData} />
+    </>);
   }
   return (
     <div>
