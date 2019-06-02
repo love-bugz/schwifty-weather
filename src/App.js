@@ -49,7 +49,12 @@ function Home() {
   // function displayData() {}
 
   if (store.weatherData) {
-    return <Weather weather={store.weatherData} />;
+    return (<>
+    <button onClick={ (e) => {
+      e.preventDefault();
+      setStore({ ...store, weatherData: null })}}>Back</button>
+    <Weather weather={store.weatherData} />
+    </>);
   }
   return (
     <div>
@@ -77,6 +82,7 @@ function Home() {
           value={zipCode}
           onChange={e => setZipCode(e.target.value)}
         />
+        <button>Submit</button>
       </form>
       <h3>Latitude: {latitude}</h3>
       <h3>Longitude: {longitude}</h3>
@@ -89,6 +95,10 @@ function Weather({ weather }) {
     <div className="weather">
       <h3>Here's the weather</h3>
       {weather.alerts.length > 0 && alert(weather.alerts[0].title)}
+      <h5>Temperature: {Math.round(weather.currently.temperature)}°F</h5>
+      <h5>Skies: {weather.currently.summary}</h5>
+      <h5>Wind: {Math.round(weather.currently.windSpeed)}mph</h5>
+      <h5>Forecast: {weather.hourly.summary}</h5>
     </div>
   );
 }
