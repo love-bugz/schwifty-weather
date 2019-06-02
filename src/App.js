@@ -14,14 +14,43 @@ function App() {
 }
 
 function Home() {
-  useEffect(() => {}, []);
-
   const [zipCode, setZipCode] = useState("");
 
   const [latitude, setLatitude] = useState("");
 
   const [longitude, setLongitude] = useState("");
 
+  const [store, setStore] = useState({ weatherData: null });
+
+  useEffect(() => {
+    if (latitude !== "" && longitude !== "") {
+      Axios.get(
+        `https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/${
+          process.env.REACT_APP_DARKSKY_KEY
+        }/${latitude},${longitude}`,
+        {
+          headers: { "X-Requested-With": "XMLHttpRequest" }
+        }
+      )
+        .then(res => {
+          console.log(res.data);
+          setStore({ ...store, weatherData: res.data });
+        })
+        .catch(console.error);
+    } else {
+      console.log("Hello!");
+    }
+  }, [latitude, longitude]);
+
+  // useEffect(() => {
+  //   store.weatherData !== null && displayData();
+  // }, store.weatherData);
+
+  // function displayData() {}
+
+  if (store.weatherData) {
+    return <Weather weather={store.weatherData} />;
+  }
   return (
     <div>
       <h2>Home</h2>
@@ -34,9 +63,8 @@ function Home() {
             .then(res => {
               if (res.data.records.length > 0) {
                 const result = res.data.records[0].geometry.coordinates;
-                console.log(result);
-                setLatitude(result[0]);
-                setLongitude(result[1]);
+                setLongitude(result[0]);
+                setLatitude(result[1]);
               } else {
                 alert("Invalid ZIP Code");
               }
@@ -52,6 +80,15 @@ function Home() {
       </form>
       <h3>Latitude: {latitude}</h3>
       <h3>Longitude: {longitude}</h3>
+    </div>
+  );
+}
+
+function Weather({ weather }) {
+  return (
+    <div className="weather">
+      <h3>Here's the weather</h3>
+      {weather.alerts.length > 0 && alert(weather.alerts[0].title)}
     </div>
   );
 }
